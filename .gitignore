@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.log
+outputs/*.json
+outputs/*.dot
+!outputs/.gitkeep
+.DS_Store
+.vscode/
+.idea/

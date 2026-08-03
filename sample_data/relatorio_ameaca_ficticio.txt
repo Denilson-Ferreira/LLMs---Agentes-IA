@@ -1,0 +1,7 @@
+RELATÓRIO FICTÍCIO PARA FINS DIDÁTICOS
+
+Uma campanha denominada Operação Exemplo explorou a vulnerabilidade CVE-2026-12345 em um servidor de testes. O arquivo suspeito possui o hash SHA-256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.
+
+Foram observadas comunicações com o endereço IP 203.0.113.42 e com o domínio update-exemplo.invalid. O comportamento incluiu execução de PowerShell e tentativa de coleta de credenciais.
+
+Este documento é totalmente fictício e usa endereços reservados para documentação.

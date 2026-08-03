@@ -1,0 +1,3 @@
+# Os experimentos iniciais usam apenas a biblioteca padrão do Python.
+# Dependências de LangGraph, CrewAI e integrações reais serão adicionadas
+# após a configuração do ambiente com Python 3.13.
