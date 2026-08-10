@@ -1,37 +1,82 @@
-# Roteiro curto para apresentação ao professor
+# Roteiro de apresentação ao professor
 
-## Abertura
+Tempo sugerido: 10 a 15 minutos.
 
-“Os cursos me ajudaram a entender que um sistema de IA aplicado a CTI não é apenas um chatbot. É uma arquitetura formada por LLM, ferramentas, RAG, memória, fluxos, protocolos, grafos e agentes especializados.”
+## 1. Abertura
 
-## Curso 1 — LangGraph
+“Este repositório registra minha evolução em sete temas de agentes de IA. Para cada tema organizei a teoria e um experimento executável. Também evoluí alguns conceitos para integrações reais com LangGraph, GroqCloud, CrewAI e APIs públicas.”
 
-“Aprendi a representar um agente como um grafo de estados. Nós executam tarefas, arestas controlam o caminho e o estado transporta informações entre as etapas.”
+## 2. Visão geral da teoria
 
-## Curso 2 — Memória de longo prazo
+Use a tabela do README principal e resuma:
 
-“Aprendi que o agente pode manter contexto de curto prazo e guardar fatos e experiências relevantes para uso futuro. Também entendi que memória precisa de regras para evitar guardar conteúdo incorreto ou sensível.”
+- **LLM:** interpreta a solicitação e gera linguagem;
+- **Tool:** função que o modelo pode solicitar;
+- **Agente:** a LLM recebe ferramentas e decide como avançar;
+- **LangGraph:** organiza estado, nós, arestas e ciclos;
+- **memória e RAG:** preservam ou recuperam contexto relevante;
+- **multiagentes:** dividem uma tarefa entre papéis especializados.
 
-## Curso 3 — RAG
+## 3. Demonstração conceitual
 
-“Aprendi que o LLM não deve responder apenas com o conhecimento do treinamento. O RAG recupera trechos de fontes externas e os fornece como contexto para uma resposta mais fundamentada.”
+No terminal do VS Code, na raiz do repositório:
 
-## Curso 4 — ACP
+```powershell
+.\.venv\Scripts\python.exe run_all.py
+```
 
-“Aprendi que agentes precisam de mensagens padronizadas para solicitar tarefas, informar status, devolver resultados e tratar falhas.”
+Explique que esses exemplos são determinísticos. Eles permitem estudar cada arquitetura sem custo, chave ou indisponibilidade de rede.
 
-## Curso 5 — Grafo de conhecimento
+## 4. Demonstração principal: LangGraph real
 
-“Aprendi a representar entidades e relações: um grupo utiliza um malware, o malware explora uma CVE e produz IOCs. O grafo permite descobrir conexões que uma lista simples não mostra.”
+Abra `experiments/01-langgraph-conceitual/agente-utilidades-brasil/agent.py` e aponte:
 
-## Curso 6 — LLM como sistema operacional
+1. `MessagesState`, que guarda as mensagens;
+2. o node `agent`, que chama a LLM;
+3. o `ToolNode`, que executa ferramentas;
+4. `tools_condition`, que escolhe entre ferramenta e fim;
+5. a aresta `tools → agent`, que devolve a observação para a LLM.
 
-“Aprendi a pensar na janela de contexto como memória de trabalho. O agente precisa decidir o que fica disponível agora, o que é resumido e o que é arquivado para recuperação posterior.”
+Mostre o desenho:
 
-## Curso 7 — CrewAI e multiagentes
+```powershell
+cd experiments\01-langgraph-conceitual\agente-utilidades-brasil
+ver-grafo.cmd
+```
 
-“Aprendi a dividir uma tarefa complexa entre agentes especializados, cada um com papel, objetivo, ferramentas e guardrails. Também percebi que mais agentes aumentam custo e complexidade, então a divisão precisa ter propósito.”
+Depois execute:
 
-## Encerramento
+```powershell
+run.cmd
+```
 
-“Minha principal conclusão é que a IA pode apoiar o analista de CTI na triagem, extração, enriquecimento, correlação e elaboração de relatórios, mas as decisões críticas devem permanecer verificáveis e sob supervisão humana.”
+Pergunta sugerida:
+
+> Onde fica o CEP 01001-000 e quanto está o dólar hoje?
+
+Enquanto o programa roda, destaque `TOOL CALL`, argumentos, `TOOL RESULT` e resposta final. Não é chain-of-thought: são eventos observáveis do sistema.
+
+## 5. O momento em que vira um agente
+
+“A LLM não chama a internet diretamente. Ela decide que precisa de uma ferramenta e gera uma chamada estruturada. O Python executa a requisição real, converte o resultado em `ToolMessage` e devolve essa observação à LLM. Essa tomada de decisão seguida de ação e observação caracteriza o agente.”
+
+## 6. Outros exemplos reais
+
+- Mostre `Biblioteca/agente_cve_langgraph_groq.py`: Groq decide consultar uma CVE na API do NVD.
+- Mostre `experiments/07-multiagentes/equipe_artigo_crewai.ipynb`: planejador, redator e editor executam tarefas sequenciais.
+
+Se o tempo for curto, apenas apresente o código desses dois projetos e mantenha a execução ao vivo no Agente de Utilidades.
+
+## 7. Encerramento
+
+“Minha principal conclusão é que uma LLM isolada gera texto; um agente combina decisão, ferramentas, estado e controle de fluxo. Em aplicações reais, os resultados continuam precisando de fontes verificáveis, tratamento de falhas, proteção das credenciais e supervisão humana.”
+
+## Checklist antes da aula
+
+- [ ] Abrir o repositório no VS Code
+- [ ] Confirmar que o `.env` existe localmente e não aparece no Git
+- [ ] Executar os testes
+- [ ] Testar `run.cmd` com CEP e cotação
+- [ ] Testar `ver-grafo.cmd`
+- [ ] Fechar terminais que possam mostrar a chave
+- [ ] Confirmar que a internet está disponível

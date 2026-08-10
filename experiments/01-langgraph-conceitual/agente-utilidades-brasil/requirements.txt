@@ -1,7 +1,6 @@
-crewai[litellm]
-langchain
-langchain-groq
-langchain-xai
 langgraph
+langchain
+langchain-xai
+langchain-groq
 python-dotenv
 requests

@@ -2,25 +2,27 @@
 
 ## Concluído
 
-- [x] Fundamentos de CTI, IOC, CVE e malware
-- [x] Diferença entre LLM, chatbot e agente
-- [x] Conceitos de RAG e memória
-- [x] Conceitos de LangGraph
-- [x] Conceitos de ACP
-- [x] Conceitos de grafo de conhecimento
-- [x] Conceitos de gerenciamento de contexto
-- [x] Conceitos de sistemas multiagentes
-- [x] Sete experimentos didáticos sem dependências externas
-- [x] Apresentação em PPTX
+- [x] Resumos dos sete cursos organizados por tema
+- [x] Fundamentos de LLM, agente, ferramenta e tool calling
+- [x] Conceitos de LangGraph, estado, nós, arestas e ReAct
+- [x] Conceitos de memória, RAG e gerenciamento de contexto
+- [x] Conceitos de ACP, grafos de conhecimento e multiagentes
+- [x] Sete experimentos conceituais executáveis sem API
+- [x] Agente de utilidades com LangGraph, Groq, ViaCEP e AwesomeAPI
+- [x] Visualização interativa do grafo LangGraph
+- [x] Agente de CVE com LangGraph, GroqCloud e NVD
+- [x] Notebook multiagente real com CrewAI e GroqCloud
+- [x] Testes locais e workflow do GitHub Actions
+- [x] Documentação de instalação, segurança e roteiro de apresentação
 
-## Em andamento
+## Próximas evoluções possíveis
 
-- [ ] Instalação do Python 3.13 para frameworks com compatibilidade limitada
-- [ ] Experimentos com LangGraph real
-- [ ] Experimentos com CrewAI real
-- [ ] Integração com LLM por API ou modelo local
-- [ ] Integração com fontes reais e autorizadas de CTI
+- [ ] Adicionar avaliação automática da qualidade das respostas
+- [ ] Criar testes de integração opcionais para as APIs externas
+- [ ] Adicionar persistência real ao experimento de memória
+- [ ] Substituir o RAG textual didático por embeddings e banco vetorial
+- [ ] Evoluir os protótipos somente quando cada nova dependência tiver propósito claro
 
-## Observação importante
+## Limite do projeto
 
-Os experimentos presentes são protótipos didáticos. Eles demonstram os conceitos estudados, mas não devem ser apresentados como uma plataforma de segurança pronta para produção.
+Este é um portfólio educacional. Os exemplos mostram arquitetura e execução real de ferramentas, mas não devem ser apresentados como uma plataforma de segurança pronta para produção. Saídas de LLM e dados externos exigem validação humana.

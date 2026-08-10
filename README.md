@@ -1,102 +1,145 @@
 # Estudos de LLMs e Agentes de IA
 
-Repositório de estudos sobre **agentes de IA, LLMs e Cyber Threat Intelligence (CTI)**, organizado a partir de sete cursos indicados para preparação ao projeto **aplicações em CTI (Agregador) — Fase 1**.
+Portfólio de estudos com teoria e experimentos executáveis sobre **LLMs, agentes de IA, LangGraph, memória, RAG, protocolos entre agentes, grafos de conhecimento e CrewAI**. O contexto aplicado é Cyber Threat Intelligence (CTI), com um experimento adicional de utilidades públicas do Brasil.
 
-> **Transparência:** este repositório reúne anotações do estudo guiado e experimentos didáticos autorais. Ele não reproduz o conteúdo integral nem os materiais proprietários dos cursos. Os experimentos foram simplificados para funcionar localmente sem chave de API e sem dependências externas.
+> Este repositório contém resumos autorais e implementações próprias. Ele não reproduz materiais proprietários dos cursos. Dados marcados como didáticos são fictícios; integrações identificadas como reais consultam APIs externas e informam suas fontes.
 
-## Objetivo
+## O que este repositório demonstra
 
-Demonstrar, de forma organizada e reproduzível:
+- a diferença entre LLM, ferramenta e agente;
+- estado, nós, arestas e tomada de decisão no LangGraph;
+- o ciclo ReAct sem expor raciocínio privado do modelo;
+- memória, RAG, protocolos e grafos em versões conceituais;
+- agentes reais usando GroqCloud e APIs públicas;
+- divisão de responsabilidades em um sistema multiagente com CrewAI.
 
-- o que foi aprendido em cada curso;
-- como os conceitos se conectam a CTI;
-- pequenos experimentos executáveis;
-- a evolução de uma arquitetura conceitual para o aplicações em CTI.
+## Trilha dos sete cursos
 
-## Os 7 cursos
+| # | Tema estudado | Experimento principal |
+|---|---|---|
+| 1 | AI Agents in LangGraph | Grafo conceitual e agente ReAct real de CEP/cotação |
+| 2 | Long-Term Agentic Memory | Memória didática persistida em JSON |
+| 3 | Retrieval-Augmented Generation (RAG) | Recuperação local por similaridade textual |
+| 4 | Agent Communication Protocol (ACP) | Mensagens padronizadas entre agentes |
+| 5 | Agentic Knowledge Graph | Entidades, relações e exportação DOT |
+| 6 | LLMs as Operating Systems | Gerenciamento da janela de contexto |
+| 7 | Multi-Agent Systems with CrewAI | Pipeline local e equipe CrewAI real em notebook |
 
-| # | Curso | Tema central | Experimento |
-|---|---|---|---|
-| 1 | AI Agents in LangGraph | Fluxos, estado, nós, arestas e decisões | Máquina de estados para análise de ameaça |
-| 2 | Long-Term Agentic Memory with LangGraph | Memória episódica, semântica e persistência | Memória em JSON |
-| 3 | Retrieval-Augmented Generation (RAG) | Busca antes da resposta | RAG local por similaridade textual |
-| 4 | ACP: Agent Communication Protocol | Comunicação padronizada entre agentes | Mensagens de tarefa em JSON |
-| 5 | Agentic Knowledge Graph Construction | Entidades e relações | Grafo de CTI e exportação DOT |
-| 6 | LLMs as Operating Systems: Agent Memory | Gestão de contexto e memória externa | Gerenciador de contexto |
-| 7 | Multi-AI Agent Systems with CrewAI | Papéis, tarefas e cooperação | Equipe multiagente simulada |
+Os resumos teóricos estão em [`courses/`](courses/) e os códigos em [`experiments/`](experiments/).
 
-## Como executar
+## Destaques práticos reais
 
-Os experimentos iniciais usam apenas a biblioteca padrão do Python e podem ser executados no Python 3.14 já instalado.
+### 1. Agente de Utilidades do Brasil
 
-```bash
-python --version
-python run_all.py
+Exemplo principal de LangGraph + ReAct. A LLM decide quando chamar `consultar_cep` e `consultar_cotacao`; o Python consulta ViaCEP e AwesomeAPI e devolve os resultados como `ToolMessage`.
+
+```text
+pergunta → LLM → tool call → API real → ToolMessage → LLM → resposta
 ```
 
-Também é possível executar um experimento isolado:
+O terminal exibe os eventos observáveis, e o projeto também gera uma visualização interativa do grafo. Consulte o [README do experimento](experiments/01-langgraph-conceitual/agente-utilidades-brasil/README.md).
 
-```bash
-python experiments/03-rag-local/main.py
+### 2. Agente de CVEs
+
+Agente LangGraph com GroqCloud que consulta a API pública do NVD e organiza uma análise em português. O modelo escolhe a ferramenta; a consulta HTTP é executada pelo programa.
+
+### 3. Equipe CrewAI
+
+Notebook com planejador, redator e editor executados sequencialmente usando GroqCloud. Consulte o [README do experimento](experiments/07-multiagentes/README.md).
+
+## Preparar o ambiente
+
+Recomendado: Python 3.11 ou superior. O ambiente atual foi validado com Python 3.13.
+
+No PowerShell, dentro desta pasta:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
+
+Edite somente o arquivo `.env` e informe sua chave:
+
+```dotenv
+GROQ_API_KEY=sua_chave_groq_aqui
+GROQ_MODEL=llama-3.1-8b-instant
+```
+
+O `.env`, a `.venv`, caches e resultados gerados estão no `.gitignore` e não devem ser enviados ao GitHub.
+
+## Executar
+
+Todos os sete exemplos conceituais, sem chamadas externas:
+
+```powershell
+.\.venv\Scripts\python.exe run_all.py
+```
+
+Agente real de utilidades do Brasil:
+
+```powershell
+cd experiments\01-langgraph-conceitual\agente-utilidades-brasil
+run.cmd
+```
+
+Visualização do grafo do agente:
+
+```powershell
+cd experiments\01-langgraph-conceitual\agente-utilidades-brasil
+ver-grafo.cmd
+```
+
+Agente real de CVEs:
+
+```powershell
+.\.venv\Scripts\python.exe Biblioteca\agente_cve_langgraph_groq.py
+```
+
+Equipe CrewAI: abra `experiments/07-multiagentes/equipe_artigo_crewai.ipynb` no VS Code e execute as células em ordem.
 
 ## Estrutura
 
 ```text
 llms-agentes-ia/
-├── courses/                  # Resumo de cada curso
-├── docs/                     # Glossário, contexto e roteiro de apresentação
-├── experiments/              # Experimentos didáticos executáveis
-├── sample_data/              # Relatório fictício para testes
-├── tests/                    # Testes básicos
-├── presentation/             # Apresentação em PPTX para importar no Google Slides
-├── PROJECT_STATUS.md         # O que já foi feito e próximos passos
-└── run_all.py                # Executa todos os experimentos
+├── .github/workflows/       # Testes automáticos do GitHub Actions
+├── Biblioteca/              # Agentes com integrações reais
+├── courses/                 # Teoria organizada por curso
+├── docs/                    # Glossário, CTI, publicação e roteiro
+├── experiments/             # Sete grupos de experimentos
+├── outputs/                 # Saídas locais geradas (ignoradas)
+├── sample_data/             # Entrada didática identificada como fictícia
+├── tests/                   # Testes automatizados
+├── .env.example             # Modelo seguro de configuração
+├── PROJECT_STATUS.md        # Estado real do portfólio
+├── requirements.txt         # Dependências dos exemplos reais
+└── run_all.py               # Executa a suíte conceitual
 ```
 
-## Relação com CTI
+## Ordem sugerida para apresentar
 
-A arquitetura estudada pode ser resumida assim:
+1. Abra este README e explique a trilha dos sete cursos.
+2. Execute `python run_all.py` para mostrar os conceitos sem depender da internet.
+3. Abra `agent.py` do Agente de Utilidades e mostre `StateGraph`, `ToolNode` e `tools_condition`.
+4. Execute `ver-grafo.cmd` para mostrar visualmente os nós e arestas.
+5. Execute `run.cmd` com uma pergunta que use CEP e cotação ao mesmo tempo.
+6. Mostre o agente de CVEs e, por último, o notebook multiagente.
 
-```text
-Fontes de CTI
-   ↓
-RAG recupera documentos
-   ↓
-LLM interpreta o conteúdo
-   ↓
-Agentes executam tarefas e usam ferramentas
-   ↓
-LangGraph controla o fluxo
-   ↓
-Memória preserva fatos e experiências
-   ↓
-Grafo conecta ameaças, malwares, CVEs e IOCs
-   ↓
-ACP padroniza a comunicação
-   ↓
-CrewAI organiza agentes especializados
-   ↓
-Analista humano valida a inteligência produzida
-```
+Há um texto de apoio pronto em [`docs/roteiro-apresentacao.md`](docs/roteiro-apresentacao.md).
 
-## Próximos passos técnicos
+## Segurança e limites
 
-Depois da instalação do Python 3.13:
+- Nenhuma chave de API deve aparecer em código, notebook, commit ou captura de tela.
+- As APIs externas podem ficar indisponíveis ou alterar seus limites.
+- Os exemplos de CTI são educacionais e não constituem uma plataforma de segurança pronta para produção.
+- Resultados produzidos por LLM devem ser verificados antes de decisões reais.
 
-1. substituir a máquina de estados didática por LangGraph real;
-2. integrar um LLM por API ou modelo local;
-3. usar um banco vetorial no RAG;
-4. integrar fontes autorizadas de CTI;
-5. experimentar CrewAI;
-6. adicionar avaliação humana e guardrails.
+## Cursos de referência
 
-## Cursos originais
-
-1. https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/
-2. https://www.deeplearning.ai/short-courses/long-term-agentic-memory-with-langgraph/
-3. https://www.deeplearning.ai/courses/retrieval-augmented-generation-rag/
-4. https://www.deeplearning.ai/short-courses/acp-agent-communication-protocol/
-5. https://www.deeplearning.ai/short-courses/agentic-knowledge-graph-construction/
-6. https://www.deeplearning.ai/short-courses/llms-as-operating-systems-agent-memory/
-7. https://www.deeplearning.ai/short-courses/multi-ai-agent-systems-with-crewai/
+1. [AI Agents in LangGraph](https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/)
+2. [Long-Term Agentic Memory with LangGraph](https://www.deeplearning.ai/short-courses/long-term-agentic-memory-with-langgraph/)
+3. [Retrieval-Augmented Generation (RAG)](https://www.deeplearning.ai/courses/retrieval-augmented-generation-rag/)
+4. [ACP: Agent Communication Protocol](https://www.deeplearning.ai/short-courses/acp-agent-communication-protocol/)
+5. [Agentic Knowledge Graph Construction](https://www.deeplearning.ai/short-courses/agentic-knowledge-graph-construction/)
+6. [LLMs as Operating Systems: Agent Memory](https://www.deeplearning.ai/short-courses/llms-as-operating-systems-agent-memory/)
+7. [Multi-AI Agent Systems with CrewAI](https://www.deeplearning.ai/short-courses/multi-ai-agent-systems-with-crewai/)
