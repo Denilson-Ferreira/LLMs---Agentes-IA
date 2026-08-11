@@ -1,0 +1,11 @@
+.env
+.venv/
+venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+
+# Credenciais locais; não ignoramos todos os JSONs acadêmicos.
+*service-account*.json
+*credentials*.json
+application_default_credentials.json

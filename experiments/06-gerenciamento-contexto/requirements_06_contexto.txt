@@ -1,0 +1,9 @@
+groq
+python-dotenv
+pydantic
+pandas
+numpy
+ipykernel
+
+# Integração Letta opcional; instale separadamente quando necessário:
+# letta-client

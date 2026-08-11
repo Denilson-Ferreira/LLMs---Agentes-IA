@@ -1,0 +1,7 @@
+TechService Brasil — documento institucional fictício para laboratório acadêmico.
+
+A TechService Brasil está localizada na Avenida Paulista, 1500, São Paulo - SP. O atendimento regular funciona de segunda a sexta-feira, das 8h às 18h, exceto feriados nacionais.
+
+Os canais oficiais de suporte são o portal do cliente, o e-mail suporte@techservice.exemplo e o telefone fictício (11) 4000-1234. A empresa oferece suporte técnico remoto, implantação de sistemas, manutenção preventiva, monitoramento e consultoria em infraestrutura.
+
+Todo chamado recebe um protocolo. O atendimento segue a ordem de prioridade definida pelo plano contratado e pela gravidade informada. Estes dados são fictícios e servem somente para demonstração de RAG.

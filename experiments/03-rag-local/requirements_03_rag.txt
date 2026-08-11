@@ -1,0 +1,10 @@
+langchain
+langchain-groq
+langchain-text-splitters
+rank-bm25
+python-dotenv
+pydantic
+pandas
+numpy
+scikit-learn
+ipykernel

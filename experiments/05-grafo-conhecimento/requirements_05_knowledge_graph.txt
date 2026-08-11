@@ -1,0 +1,7 @@
+google-adk
+litellm>=1.77.5,<2.0.0
+google-genai
+python-dotenv
+pydantic
+pandas
+ipykernel

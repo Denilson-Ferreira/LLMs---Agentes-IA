@@ -50,7 +50,13 @@ class ErroModelo(RuntimeError):
 
 def carregar_configuracao() -> tuple[str, str, str]:
     """Carrega provedor, chave e modelo sem jamais imprimir a credencial."""
-    load_dotenv(Path(__file__).with_name(".env"), override=True)
+    project_dir = Path(__file__).resolve().parent
+    repo_root = next(
+        (path for path in (project_dir, *project_dir.parents) if (path / "experiments").is_dir()),
+        project_dir,
+    )
+    load_dotenv(repo_root / ".env")
+    load_dotenv(project_dir / ".env", override=False)
     provedor = os.getenv("LLM_PROVIDER", "").strip().lower()
     chave_xai = os.getenv("XAI_API_KEY", "").strip()
     chave_groq = os.getenv("GROQ_API_KEY", "").strip()

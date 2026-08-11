@@ -1,0 +1,11 @@
+TechService Brasil — catálogo fictício para laboratório acadêmico.
+
+Plano Basic: R$ 199 por mês. Inclui suporte remoto em horário comercial para até 10 usuários, com primeira resposta em até 16 horas úteis.
+
+Plano Professional: R$ 599 por mês. Inclui suporte remoto para até 50 usuários, monitoramento básico e primeira resposta em até 8 horas úteis.
+
+Plano Enterprise: R$ 1.999 por mês. Inclui usuários ilimitados, monitoramento contínuo, gerente de conta e atendimento prioritário conforme a política Enterprise.
+
+Serviço de instalação: taxa única de R$ 850 para instalação padrão, com agendamento em até 5 dias úteis após a confirmação.
+
+Serviço de manutenção avulsa: R$ 300 por hora técnica, com cobrança mínima de uma hora. Todos os preços e produtos são fictícios.

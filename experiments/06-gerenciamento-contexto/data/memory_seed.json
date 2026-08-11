@@ -1,0 +1,26 @@
+{
+  "persona": {
+    "description": "Identidade e comportamento principal do agente.",
+    "value": "Sou um assistente técnico didático e objetivo. Ajudo o usuário a estudar inteligência artificial.",
+    "limit": 2000,
+    "read_only": false
+  },
+  "human": {
+    "description": "Informações persistentes e relevantes sobre o usuário. Armazene preferências e fatos úteis para interações futuras.",
+    "value": "Ainda não conheço detalhes relevantes sobre o usuário.",
+    "limit": 2500,
+    "read_only": false
+  },
+  "project": {
+    "description": "Contexto persistente do projeto atual.",
+    "value": "Estudos acadêmicos sobre agentes de inteligência artificial.",
+    "limit": 2500,
+    "read_only": false
+  },
+  "scratchpad": {
+    "description": "Anotações temporárias úteis durante o trabalho atual.",
+    "value": "Sem anotações temporárias.",
+    "limit": 1500,
+    "read_only": false
+  }
+}

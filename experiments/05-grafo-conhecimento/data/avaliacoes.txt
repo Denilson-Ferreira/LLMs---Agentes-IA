@@ -1,0 +1,32 @@
+DADOS FICTÍCIOS PARA FINS ACADÊMICOS.
+Todas as pessoas, produtos e opiniões deste arquivo são exemplos sintéticos.
+
+Cliente C001 avaliou o produto P001:
+"O notebook atende bem ao trabalho diário e iniciou rapidamente."
+
+Cliente C001 avaliou o produto P002:
+"O mouse é confortável, mas a embalagem poderia ser menor."
+
+Cliente C002 avaliou o produto P006:
+"A cadeira é firme e confortável; a montagem levou mais tempo que o esperado."
+
+Cliente C003 avaliou o produto P003:
+"O teclado é excelente, mas a entrega demorou."
+
+Cliente C004 avaliou o produto P004:
+"Boa qualidade de imagem e instalação simples nos três monitores."
+
+Cliente C005 avaliou o produto P005:
+"Gostei do som, porém o isolamento de ruído é apenas razoável."
+
+Cliente C006 avaliou o produto P008:
+"A mochila tem bom espaço interno e acabamento resistente."
+
+Cliente C007 avaliou o produto P007:
+"A imagem é nítida, mas o aplicativo de configuração precisa melhorar."
+
+Cliente C008 avaliou o produto P002:
+"Produto simples, preciso e com bom custo-benefício."
+
+Cliente C003 avaliou o produto P004:
+"O monitor tem cores ótimas; senti falta de ajuste maior de altura."
