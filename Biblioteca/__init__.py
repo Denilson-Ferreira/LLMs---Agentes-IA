@@ -1,1 +1,0 @@
-"""Agentes reutilizáveis do projeto."""

@@ -1,57 +1,41 @@
-# Estudos de LLMs e Agentes de IA
+# LLMs e Agentes de IA — exemplos executáveis
 
-Portfólio de estudos com teoria e experimentos executáveis sobre **LLMs, agentes de IA, LangGraph, memória, RAG, protocolos entre agentes, grafos de conhecimento e CrewAI**. O contexto aplicado é Cyber Threat Intelligence (CTI), com um experimento adicional de utilidades públicas do Brasil.
+Repositório organizado com projetos Python e notebooks que executam fluxos reais
+de LLMs e agentes usando **Groq**, **LangGraph**, **Google ADK**, **RAG** e
+**CrewAI**.
 
-> Este repositório contém resumos autorais e implementações próprias. Ele não reproduz materiais proprietários dos cursos. Dados marcados como didáticos são fictícios; integrações identificadas como reais consultam APIs externas e informam suas fontes.
+Os protótipos conceituais duplicados foram removidos. Os arquivos em `data/` são
+entradas controladas de demonstração necessárias para executar RAG, QA, grafo de
+conhecimento e memória; as integrações, chamadas de modelo e ferramentas são reais.
 
-## O que este repositório demonstra
-
-- a diferença entre LLM, ferramenta e agente;
-- estado, nós, arestas e tomada de decisão no LangGraph;
-- o ciclo ReAct sem expor raciocínio privado do modelo;
-- memória, RAG, protocolos e grafos em versões conceituais;
-- agentes reais usando GroqCloud e APIs públicas;
-- divisão de responsabilidades em um sistema multiagente com CrewAI.
-
-## Trilha dos sete cursos
-
-| # | Tema estudado | Experimento principal |
-|---|---|---|
-| 1 | AI Agents in LangGraph | Grafo conceitual e agente ReAct real de CEP/cotação |
-| 2 | Long-Term Agentic Memory | Memória didática persistida em JSON |
-| 3 | Retrieval-Augmented Generation (RAG) | Recuperação local por similaridade textual |
-| 4 | Agent Communication Protocol (ACP) | Mensagens padronizadas entre agentes |
-| 5 | Agentic Knowledge Graph | Entidades, relações e exportação DOT |
-| 6 | LLMs as Operating Systems | Gerenciamento da janela de contexto |
-| 7 | Multi-Agent Systems with CrewAI | Pipeline local e equipe CrewAI real em notebook |
-
-Os resumos teóricos estão em [`courses/`](courses/) e os códigos em [`experiments/`](experiments/).
-
-## Destaques práticos reais
-
-### 1. Agente de Utilidades do Brasil
-
-Exemplo principal de LangGraph + ReAct. A LLM decide quando chamar `consultar_cep` e `consultar_cotacao`; o Python consulta ViaCEP e AwesomeAPI e devolve os resultados como `ToolMessage`.
+## Estrutura
 
 ```text
-pergunta → LLM → tool call → API real → ToolMessage → LLM → resposta
+LLMs Agentes IA/
+├── experiments/
+│   ├── 01-langgraph/
+│   │   ├── agente-utilidades-brasil/  # Groq + ViaCEP + AwesomeAPI
+│   │   ├── agente-busca-tavily/       # Groq + Tavily + notebook
+│   │   └── agente-cve-nvd/            # Groq + API pública do NVD
+│   ├── 02-memoria-longo-prazo/        # LangGraph + memória + notebook
+│   ├── 03-rag-local/                   # RAG híbrido + Groq + notebook
+│   ├── 04-protocolo-a2a/              # QA Agent preparado para A2A
+│   ├── 05-grafo-conhecimento/          # Google ADK + Groq/LiteLLM
+│   ├── 06-gerenciamento-contexto/      # Memória editável + tool calling
+│   └── 07-multiagentes/                # CrewAI + Groq
+├── tests/                              # testes do agente NVD
+├── docs/                               # instruções auxiliares
+├── .env.example
+├── requirements.txt
+└── README.md
 ```
 
-O terminal exibe os eventos observáveis, e o projeto também gera uma visualização interativa do grafo. Consulte o [README do experimento](experiments/01-langgraph-conceitual/agente-utilidades-brasil/README.md).
+Cada projeto contém seu próprio `README.md`, `requirements.txt` e, quando
+aplicável, um notebook equivalente ao script Python.
 
-### 2. Agente de CVEs
+## Configuração da Groq
 
-Agente LangGraph com GroqCloud que consulta a API pública do NVD e organiza uma análise em português. O modelo escolhe a ferramenta; a consulta HTTP é executada pelo programa.
-
-### 3. Equipe CrewAI
-
-Notebook com planejador, redator e editor executados sequencialmente usando GroqCloud. Consulte o [README do experimento](experiments/07-multiagentes/README.md).
-
-## Preparar o ambiente
-
-Recomendado: Python 3.11 ou superior. O ambiente atual foi validado com Python 3.13.
-
-No PowerShell, dentro desta pasta:
+Crie o ambiente principal e copie o modelo seguro de configuração:
 
 ```powershell
 python -m venv .venv
@@ -59,87 +43,63 @@ python -m venv .venv
 Copy-Item .env.example .env
 ```
 
-Edite somente o arquivo `.env` e informe sua chave:
+Preencha somente o `.env` da raiz:
 
 ```dotenv
-GROQ_API_KEY=sua_chave_groq_aqui
+GROQ_API_KEY=sua_chave_groq
 GROQ_MODEL=llama-3.1-8b-instant
 ```
 
-O `.env`, a `.venv`, caches e resultados gerados estão no `.gitignore` e não devem ser enviados ao GitHub.
+O `.env` e os ambientes virtuais são ignorados pelo Git.
 
-## Executar
+## Projetos
 
-Todos os sete exemplos conceituais, sem chamadas externas:
+| Curso | Projeto executável | Serviço principal |
+|---|---|---|
+| 1 | Agente de utilidades do Brasil | Groq, ViaCEP e AwesomeAPI |
+| 1 | Agente de busca web | Groq e Tavily |
+| 1 | Agente de CVEs | Groq e NVD |
+| 2 | Memória de longo prazo | Groq e LangGraph |
+| 3 | RAG local híbrido | Groq, BM25 e vetores locais |
+| 4 | QA Agent para A2A | Groq |
+| 5 | Interpretação para grafo de conhecimento | Google ADK, LiteLLM e Groq |
+| 6 | Memória editável | Groq e tool calling |
+| 7 | Sistema multiagente | CrewAI, LiteLLM e Groq |
 
-```powershell
-.\.venv\Scripts\python.exe run_all.py
-```
+## Execução
 
-Agente real de utilidades do Brasil:
-
-```powershell
-cd experiments\01-langgraph-conceitual\agente-utilidades-brasil
-run.cmd
-```
-
-Visualização do grafo do agente:
-
-```powershell
-cd experiments\01-langgraph-conceitual\agente-utilidades-brasil
-ver-grafo.cmd
-```
-
-Agente real de CVEs:
+Leia o README da pasta desejada. Exemplos:
 
 ```powershell
-.\.venv\Scripts\python.exe Biblioteca\agente_cve_langgraph_groq.py
+# Agente com APIs públicas brasileiras
+cd experiments\01-langgraph\agente-utilidades-brasil
+.\run.ps1
+
+# RAG local
+cd ..\..\03-rag-local
+python rag_local.py
+
+# Sistema multiagente
+cd ..\07-multiagentes
+python sistema_multiagentes.py
 ```
 
-Equipe CrewAI: abra `experiments/07-multiagentes/equipe_artigo_crewai.ipynb` no VS Code e execute as células em ordem.
+Nos cursos 4, 5 e 6, `RUN_LIVE_DEMOS=false` evita chamadas remotas ao executar
+todas as células. Altere para `true` somente quando quiser executar as
+demonstrações reais.
 
-## Estrutura
+O agente de busca web também exige `TAVILY_API_KEY`; a pesquisa opcional do
+CrewAI exige `SERPER_API_KEY`.
 
-```text
-llms-agentes-ia/
-├── .github/workflows/       # Testes automáticos do GitHub Actions
-├── Biblioteca/              # Agentes com integrações reais
-├── courses/                 # Teoria organizada por curso
-├── docs/                    # Glossário, CTI, publicação e roteiro
-├── experiments/             # Sete grupos de experimentos
-├── outputs/                 # Saídas locais geradas (ignoradas)
-├── sample_data/             # Entrada didática identificada como fictícia
-├── tests/                   # Testes automatizados
-├── .env.example             # Modelo seguro de configuração
-├── PROJECT_STATUS.md        # Estado real do portfólio
-├── requirements.txt         # Dependências dos exemplos reais
-└── run_all.py               # Executa a suíte conceitual
+## Testes
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-## Ordem sugerida para apresentar
+## Segurança
 
-1. Abra este README e explique a trilha dos sete cursos.
-2. Execute `python run_all.py` para mostrar os conceitos sem depender da internet.
-3. Abra `agent.py` do Agente de Utilidades e mostre `StateGraph`, `ToolNode` e `tools_condition`.
-4. Execute `ver-grafo.cmd` para mostrar visualmente os nós e arestas.
-5. Execute `run.cmd` com uma pergunta que use CEP e cotação ao mesmo tempo.
-6. Mostre o agente de CVEs e, por último, o notebook multiagente.
-
-Há um texto de apoio pronto em [`docs/roteiro-apresentacao.md`](docs/roteiro-apresentacao.md).
-
-## Segurança e limites
-
-- Nenhuma chave de API deve aparecer em código, notebook, commit ou captura de tela.
-- As APIs externas podem ficar indisponíveis ou alterar seus limites.
-- Os exemplos de CTI são educacionais e não constituem uma plataforma de segurança pronta para produção.
-- Resultados produzidos por LLM devem ser verificados antes de decisões reais.
-
-## Cursos de referência
-
-1. [AI Agents in LangGraph](https://www.deeplearning.ai/short-courses/ai-agents-in-langgraph/)
-2. [Long-Term Agentic Memory with LangGraph](https://www.deeplearning.ai/short-courses/long-term-agentic-memory-with-langgraph/)
-3. [Retrieval-Augmented Generation (RAG)](https://www.deeplearning.ai/courses/retrieval-augmented-generation-rag/)
-4. [ACP: Agent Communication Protocol](https://www.deeplearning.ai/short-courses/acp-agent-communication-protocol/)
-5. [Agentic Knowledge Graph Construction](https://www.deeplearning.ai/short-courses/agentic-knowledge-graph-construction/)
-6. [LLMs as Operating Systems: Agent Memory](https://www.deeplearning.ai/short-courses/llms-as-operating-systems-agent-memory/)
-7. [Multi-AI Agent Systems with CrewAI](https://www.deeplearning.ai/short-courses/multi-ai-agent-systems-with-crewai/)
+- Nunca coloque chaves em scripts, notebooks ou commits.
+- Revise respostas de LLM antes de usá-las em decisões reais.
+- APIs externas podem ter limites, indisponibilidade e cobrança própria.
+- Arquivos `.env.example` contêm apenas placeholders seguros.

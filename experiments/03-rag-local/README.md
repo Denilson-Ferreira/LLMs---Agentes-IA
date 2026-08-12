@@ -1,7 +1,7 @@
 # Experimento 03 — Retrieval Augmented Generation (RAG)
 
 Implementação acadêmica original de um pipeline RAG completo para a empresa
-fictícia TechService Brasil. O projeto demonstra ingestão, chunking, embeddings,
+de demonstração da TechService Brasil. O projeto demonstra ingestão, chunking, vetores,
 busca semântica e lexical, retrieval híbrido, reranking, geração fundamentada,
 fontes, avaliação e latência.
 
@@ -60,7 +60,7 @@ Weaviate Cloud, mantendo as etapas de ingestão e retrieval.
 
 ## Dados
 
-`data/` contém três arquivos totalmente fictícios: dados institucionais, catálogo
+`data/` contém três arquivos sintéticos de demonstração: dados institucionais, catálogo
 de produtos e políticas. Eles existem apenas para laboratório e não descrevem uma
 empresa real.
 
@@ -71,7 +71,7 @@ python --version
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r requirements_03_rag.txt
+python -m pip install -r requirements.txt
 ```
 
 É necessário Python 3.10 ou superior e as extensões Python/Jupyter do VS Code.
@@ -97,10 +97,10 @@ conforme a conta; os vetores de busca são gerados localmente por hashing determ
 Arquivo Python:
 
 ```powershell
-python 03_rag_completo.py
+python rag_local.py
 ```
 
-No VS Code, abra primeiro `03_rag_completo.ipynb`, clique em **Select Kernel** e
+No VS Code, abra primeiro `rag_local.ipynb`, clique em **Select Kernel** e
 escolha `.venv`. Execute as células na ordem. O `.py` possui os mesmos blocos em
 formato `# %%` e também pode ser executado interativamente com **Run Cell**.
 
@@ -111,7 +111,7 @@ híbrida, pergunta sem resposta e comparação sem/com RAG. As células mais út
 apresentação são: chunking (9–10), indexação (11), buscas (12–15), pipeline (22),
 comparação (25), avaliações (26–27) e debug completo (29).
 
-Sem RAG, a LLM não conhece necessariamente a empresa fictícia. Com RAG, os dados
+Sem RAG, a LLM não conhece necessariamente a base local. Com RAG, os dados
 são recuperados e inseridos no contexto, reduzindo alucinações. Recuperar muitos
 chunks aumenta ruído e custo; recuperar poucos pode omitir informação.
 

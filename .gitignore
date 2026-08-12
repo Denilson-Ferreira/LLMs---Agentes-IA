@@ -14,9 +14,6 @@ htmlcov/
 .crewai-data/
 .env
 *.log
-outputs/*.json
-outputs/*.dot
-!outputs/.gitkeep
 .DS_Store
 .vscode/
 .idea/

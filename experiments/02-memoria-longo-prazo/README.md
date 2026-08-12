@@ -75,7 +75,7 @@ python --version
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -r requirements_02_memoria.txt
+python -m pip install -r requirements.txt
 ```
 
 ## Configuração do `.env`
@@ -98,16 +98,16 @@ publique a chave em código, notebook, commit ou captura de tela.
 
 ### Arquivo Python interativo
 
-Abra `02_memoria_longo_prazo_langgraph.py`, selecione o interpretador `.venv` e
+Abra `memoria_longo_prazo.py`, selecione o interpretador `.venv` e
 use **Run Cell** nos blocos `# %%`, na ordem. Para executar tudo no terminal:
 
 ```powershell
-python 02_memoria_longo_prazo_langgraph.py
+python memoria_longo_prazo.py
 ```
 
 ### Notebook
 
-1. Abra `02_memoria_longo_prazo_langgraph.ipynb`.
+1. Abra `memoria_longo_prazo.ipynb`.
 2. Clique em **Select Kernel**.
 3. Escolha **Python Environments** e o Python de `.venv`.
 4. Execute **Run All** ou as células na ordem.

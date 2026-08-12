@@ -53,7 +53,7 @@ O SDK oficial atual do Letta é `letta-client`; ele oferece `Letta`, `memory_blo
 cd "C:\Users\denil\Downloads\LLMS - agentes IA\LLMs Agentes IA\experiments\06-gerenciamento-contexto"
 py -3.10 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements_06_contexto.txt
+python -m pip install -r requirements.txt
 ```
 
 Letta é opcional:
@@ -81,12 +81,12 @@ Nunca faça commit do `.env`, imprima chaves ou permita que ferramentas editem b
 
 ## Execução segura
 
-Abra `01_editable_memory.ipynb` no VS Code. Execute primeiro as células 1–14; com `RUN_LIVE_DEMOS=false`, nenhuma chamada remota ocorre. Para uma demonstração real, configure a chave, defina `RUN_LIVE_DEMOS=True` e execute somente a célula desejada. O loop aceita no máximo cinco rodadas de ferramentas.
+Abra `memoria_editavel.ipynb` no VS Code. Execute primeiro as células 1–14; com `RUN_LIVE_DEMOS=false`, nenhuma chamada remota ocorre. Para uma demonstração real, configure a chave, defina `RUN_LIVE_DEMOS=True` e execute somente a célula desejada. O loop aceita no máximo cinco rodadas de ferramentas.
 
 Também é possível usar as células `# %%`:
 
 ```powershell
-python .\01_editable_memory.py
+python .\memoria_editavel.py
 ```
 
 ## Células principais para o professor
@@ -140,9 +140,9 @@ Há mensagens para chave ausente, bloco inexistente/read-only, limite excedido, 
 
 ```text
 06-gerenciamento-contexto/
-├── 01_editable_memory.ipynb
-├── 01_editable_memory.py
-├── requirements_06_contexto.txt
+├── memoria_editavel.ipynb
+├── memoria_editavel.py
+├── requirements.txt
 ├── .env.example
 ├── .gitignore
 ├── README.md

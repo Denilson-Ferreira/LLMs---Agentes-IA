@@ -1,34 +1,41 @@
+import importlib.util
 import os
 from pathlib import Path
 import sys
 import unittest
 from unittest.mock import patch
 
-# Permite executar este arquivo tanto pela descoberta do unittest quanto
-# diretamente, inclusive quando o terminal está na pasta externa do projeto.
+
 REPOSITORIO = Path(__file__).resolve().parents[1]
 if str(REPOSITORIO) not in sys.path:
     sys.path.insert(0, str(REPOSITORIO))
 
 os.environ.setdefault("GROQ_API_KEY", "chave-ficticia-para-testes")
 
-from Biblioteca import agente_cve_langgraph_groq as modulo
+MODULE_PATH = (
+    REPOSITORIO
+    / "experiments"
+    / "01-langgraph"
+    / "agente-cve-nvd"
+    / "agente_cve_nvd.py"
+)
+SPEC = importlib.util.spec_from_file_location("agente_cve_nvd", MODULE_PATH)
+if SPEC is None or SPEC.loader is None:
+    raise ImportError(f"Não foi possível carregar {MODULE_PATH}")
+modulo = importlib.util.module_from_spec(SPEC)
+sys.modules[SPEC.name] = modulo
+SPEC.loader.exec_module(modulo)
 
 
 class ConsultarNvdTests(unittest.TestCase):
     def test_rejeita_cve_com_formato_invalido(self):
         resultado = modulo.consultar_nvd.invoke({"cve_id": "2021-44228"})
-
         self.assertIn("erro", resultado)
 
     @patch.object(modulo, "obter_json", return_value={"vulnerabilities": []})
     def test_informa_quando_cve_nao_e_encontrada(self, obter_json):
         resultado = modulo.consultar_nvd.invoke({"cve_id": "cve-2021-44228"})
-
-        self.assertEqual(
-            resultado,
-            {"cve_id": "CVE-2021-44228", "encontrada": False},
-        )
+        self.assertEqual(resultado, {"cve_id": "CVE-2021-44228", "encontrada": False})
         obter_json.assert_called_once_with(
             f"{modulo.NVD_URL}?cveId=CVE-2021-44228"
         )
@@ -65,9 +72,7 @@ class ConsultarNvdTests(unittest.TestCase):
                 }
             ]
         }
-
         resultado = modulo.consultar_nvd.invoke({"cve_id": "CVE-2021-44228"})
-
         self.assertTrue(resultado["encontrada"])
         self.assertEqual(resultado["descricao"], "Example description")
         self.assertEqual(resultado["cvss"]["pontuacao"], 10.0)

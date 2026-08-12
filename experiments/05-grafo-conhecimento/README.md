@@ -78,7 +78,7 @@ No PowerShell:
 cd "C:\Users\denil\Downloads\LLMS - agentes IA\LLMs Agentes IA\experiments\05-grafo-conhecimento"
 py -3.10 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements_05_knowledge_graph.txt
+python -m pip install -r requirements.txt
 python -m ipykernel install --user --name experimento-05-kg --display-name "Python (Experimento 05 KG)"
 ```
 
@@ -104,7 +104,7 @@ Nunca imprima a chave, grave-a no notebook ou faça commit do `.env`.
 
 ## Notebook e custo
 
-Abra [01_understanding_user_intent.ipynb](./01_understanding_user_intent.ipynb) no VS Code e selecione o kernel da `.venv`.
+Abra [intencao_usuario.ipynb](./intencao_usuario.ipynb) no VS Code e selecione o kernel da `.venv`.
 
 Execute primeiro as células 1–10. Com `RUN_LIVE_DEMOS=false`, elas carregam configuração, modelos Pydantic, agente e runner, mas não chamam a Groq. Para uma demonstração real, depois de validar a chave, defina deliberadamente:
 
@@ -117,7 +117,7 @@ Execute apenas a célula de teste desejada. Não use **Run All** com essa opçã
 A versão Python em células do VS Code também está disponível:
 
 ```powershell
-python .\01_understanding_user_intent.py
+python .\intencao_usuario.py
 ```
 
 Sem `RUN_LIVE_DEMOS=true`, o script realiza somente validações locais.
@@ -157,7 +157,7 @@ Assim, agentes trocam objetos estruturados em vez de prompts gigantes.
 
 O `output_key="current_intent"` grava a saída na sessão. O exemplo também mantém domínio, respostas de esclarecimento e decisão de prontidão. `InMemorySessionService` é um workspace temporário da execução atual; não é memória de longo prazo e desaparece quando o processo termina.
 
-## Dados fictícios
+## Dados de demonstração
 
 Os CSVs contêm oito clientes sintéticos, oito produtos e quinze pedidos. `avaliacoes.txt` contém avaliações inventadas. Nenhum registro representa pessoa, compra ou opinião real. Esses arquivos serão candidatos de entrada para o futuro File Suggestion Agent; o Intent Agent atual não os acessa automaticamente.
 
@@ -188,9 +188,9 @@ RAG tradicional recupera chunks por similaridade, enquanto um Knowledge Graph to
 
 ```text
 05-grafo-conhecimento/
-├── 01_understanding_user_intent.ipynb
-├── 01_understanding_user_intent.py
-├── requirements_05_knowledge_graph.txt
+├── intencao_usuario.ipynb
+├── intencao_usuario.py
+├── requirements.txt
 ├── .env.example
 ├── .gitignore
 ├── README.md

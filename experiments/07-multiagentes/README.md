@@ -68,7 +68,7 @@ No PowerShell, dentro desta pasta:
 py -3.10 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements_07_multiagentes.txt
+pip install -r requirements.txt
 python -m ipykernel install --user --name 07-multiagentes --display-name "Python (07-multiagentes)"
 ```
 
@@ -94,7 +94,7 @@ dependem da conta Groq usada.
 
 ## Executar
 
-Abra `01_multiagentes_artigo_crewai.ipynb`, selecione o kernel
+Abra `sistema_multiagentes.ipynb`, selecione o kernel
 **Python (07-multiagentes)** e execute as células em ordem. A célula 16 é a primeira
 que faz a execução real e potencialmente paga:
 
@@ -113,7 +113,7 @@ O notebook inclui 45 células. Para uma apresentação curta, priorize:
 Também é possível executar o script:
 
 ```powershell
-python 01_multiagentes_artigo_crewai.py
+python sistema_multiagentes.py
 ```
 
 Importar o arquivo não chama APIs. Executar o script ou a célula 16 com uma chave

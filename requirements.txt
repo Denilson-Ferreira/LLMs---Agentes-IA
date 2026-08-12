@@ -1,7 +1,25 @@
-crewai[litellm]
+# Provedores e orquestração
+groq>=0.30.0,<2.0.0
 langchain
 langchain-groq
+langchain-tavily
 langchain-xai
 langgraph
+
+# RAG e dados
+langchain-text-splitters
+rank-bm25
+numpy
+pandas
+scikit-learn
+
+# Google ADK e CrewAI com Groq/LiteLLM
+google-adk
+litellm>=1.77.5,<2.0.0
+crewai[tools,litellm]>=1.15.12,<2.0.0
+
+# Utilitários
 python-dotenv
+pydantic
 requests
+ipykernel
