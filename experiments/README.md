@@ -5,7 +5,7 @@ arquivos de apoio necessários para execução.
 
 | Pasta | Implementação |
 |---|---|
-| `01-langgraph` | três agentes LangGraph com Groq e ferramentas externas reais |
+| `01-langgraph` | dois agentes LangGraph com Groq e ferramentas externas reais |
 | `02-memoria-longo-prazo` | agente de e-mail com memória semântica, episódica e procedural |
 | `03-rag-local` | pipeline RAG híbrido com BM25, vetores locais e Groq |
 | `04-protocolo-a2a` | QA Agent com interface preparada para integração A2A |

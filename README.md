@@ -15,16 +15,13 @@ LLMs Agentes IA/
 ├── experiments/
 │   ├── 01-langgraph/
 │   │   ├── agente-utilidades-brasil/  # Groq + ViaCEP + AwesomeAPI
-│   │   ├── agente-busca-tavily/       # Groq + Tavily + notebook
-│   │   └── agente-cve-nvd/            # Groq + API pública do NVD
+│   │   └── agente-busca-tavily/       # Groq + Tavily + notebook
 │   ├── 02-memoria-longo-prazo/        # LangGraph + memória + notebook
 │   ├── 03-rag-local/                   # RAG híbrido + Groq + notebook
 │   ├── 04-protocolo-a2a/              # QA Agent preparado para A2A
 │   ├── 05-grafo-conhecimento/          # Google ADK + Groq/LiteLLM
 │   ├── 06-gerenciamento-contexto/      # Memória editável + tool calling
 │   └── 07-multiagentes/                # CrewAI + Groq
-├── tests/                              # testes do agente NVD
-├── docs/                               # instruções auxiliares
 ├── .env.example
 ├── requirements.txt
 └── README.md
@@ -58,7 +55,6 @@ O `.env` e os ambientes virtuais são ignorados pelo Git.
 |---|---|---|
 | 1 | Agente de utilidades do Brasil | Groq, ViaCEP e AwesomeAPI |
 | 1 | Agente de busca web | Groq e Tavily |
-| 1 | Agente de CVEs | Groq e NVD |
 | 2 | Memória de longo prazo | Groq e LangGraph |
 | 3 | RAG local híbrido | Groq, BM25 e vetores locais |
 | 4 | QA Agent para A2A | Groq |
@@ -90,12 +86,6 @@ demonstrações reais.
 
 O agente de busca web também exige `TAVILY_API_KEY`; a pesquisa opcional do
 CrewAI exige `SERPER_API_KEY`.
-
-## Testes
-
-```powershell
-.\.venv\Scripts\python.exe -m unittest discover -s tests -v
-```
 
 ## Segurança
 
