@@ -112,7 +112,7 @@ python memoria_longo_prazo.py
 3. Escolha **Python Environments** e o Python de `.venv`.
 4. Execute **Run All** ou as células na ordem.
 
-## O que observar na apresentação
+## O que observar
 
 1. O e-mail sobre cobrança recupera um episódio semanticamente parecido.
 2. Uma nova `thread_id` mantém estado separado, mas o mesmo `user_id` recupera as

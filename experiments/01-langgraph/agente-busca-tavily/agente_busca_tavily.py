@@ -19,8 +19,21 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# No script, usa sua própria pasta; no notebook, usa a pasta aberta no VS Code.
-BASE_DIR = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+def _project_dir() -> Path:
+    """Localiza esta pasta tanto no script quanto no kernel do notebook."""
+    if "__file__" in globals():
+        return Path(__file__).resolve().parent
+    candidates = [
+        Path.cwd(),
+        Path.cwd() / "experiments" / "01-langgraph" / "agente-busca-tavily",
+    ]
+    return next(
+        (path for path in candidates if (path / "agente_busca_tavily.py").exists()),
+        Path.cwd(),
+    )
+
+
+BASE_DIR = _project_dir()
 REPO_ROOT = next(
     (path for path in (BASE_DIR, *BASE_DIR.parents) if (path / "experiments").is_dir()),
     BASE_DIR,
@@ -29,30 +42,45 @@ load_dotenv(REPO_ROOT / ".env")
 load_dotenv(BASE_DIR / ".env", override=False)
 
 
-def validar_configuracao() -> None:
-    """Interrompe a execução com uma mensagem clara se faltar alguma chave."""
-    variaveis_obrigatorias = ("GROQ_API_KEY", "TAVILY_API_KEY")
-    ausentes = [
-        nome
-        for nome in variaveis_obrigatorias
-        if not os.getenv(nome) or os.getenv(nome) == "cole_sua_chave_aqui"
-    ]
+PLACEHOLDER_KEYS = {
+    "",
+    "cole_sua_chave_aqui",
+    "sua_chave_aqui",
+    "sua_chave_groq",
+    "sua_chave_tavily",
+}
 
-    if ausentes:
-        nomes = ", ".join(ausentes)
+
+def chave_configurada(nome: str) -> bool:
+    """Distingue uma credencial real de valores vazios e placeholders."""
+    return os.getenv(nome, "").strip().lower() not in PLACEHOLDER_KEYS
+
+
+def validar_configuracao() -> None:
+    """Exige Groq; Tavily é opcional e habilita a busca web quando presente."""
+    if not chave_configurada("GROQ_API_KEY"):
         raise EnvironmentError(
-            f"Configuração ausente: {nomes}. "
-            "Copie .env.example para .env e preencha as chaves antes de executar."
+            "Configuração ausente: GROQ_API_KEY. Configure a chave no .env da "
+            "raiz antes de executar."
         )
 
 
 validar_configuracao()
-print("Configuração carregada: as chaves necessárias foram encontradas.")
+TAVILY_DISPONIVEL = chave_configurada("TAVILY_API_KEY")
+print("Configuração Groq carregada.")
+print(
+    "Busca Tavily habilitada."
+    if TAVILY_DISPONIVEL
+    else (
+        "TAVILY_API_KEY ausente ou com placeholder: executando sem busca web. "
+        "Adicione uma chave Tavily ao .env para habilitar o ciclo ReAct."
+    )
+)
 
 # %% Imports
 from typing import Any
 
-from langchain.messages import HumanMessage, SystemMessage
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from langchain_tavily import TavilySearch
 from langgraph.graph import END, START, MessagesState, StateGraph
@@ -72,9 +100,11 @@ model = ChatGroq(
 
 # %% Ferramenta de busca
 # A Tavily acessa informações externas e atuais. A LLM decide quando chamá-la.
-search_tool = TavilySearch(max_results=4, topic="general")
-tools = [search_tool]
-model_with_tools = model.bind_tools(tools)
+search_tool = (
+    TavilySearch(max_results=4, topic="general") if TAVILY_DISPONIVEL else None
+)
+tools = [search_tool] if search_tool is not None else []
+model_with_tools = model.bind_tools(tools) if tools else model
 
 # %% System Prompt
 SYSTEM_PROMPT = """
@@ -86,6 +116,13 @@ Você é um agente de pesquisa cuidadoso. Siga estas regras:
 5. Responda sempre em português.
 6. Seja objetivo e mencione as fontes consultadas quando possível.
 """.strip()
+if not TAVILY_DISPONIVEL:
+    SYSTEM_PROMPT += """
+
+A busca Tavily não está configurada nesta execução. Responda apenas com conhecimento
+geral do modelo, não alegue ter pesquisado a web e avise quando a pergunta depender
+de informações atuais.
+""".rstrip()
 
 # %% Nó do agente
 def agent_node(state: MessagesState) -> dict[str, list[Any]]:
@@ -125,18 +162,20 @@ def tratar_erro_ferramenta(erro: Exception) -> str:
 
 builder = StateGraph(MessagesState)
 builder.add_node("agent", agent_node)
-builder.add_node(
-    "tools",
-    ToolNode(tools, handle_tool_errors=tratar_erro_ferramenta),
-)
-
 builder.add_edge(START, "agent")
-builder.add_conditional_edges(
-    "agent",
-    should_continue,
-    {"tools": "tools", END: END},
-)
-builder.add_edge("tools", "agent")  # Cria o ciclo ReAct.
+if tools:
+    builder.add_node(
+        "tools",
+        ToolNode(tools, handle_tool_errors=tratar_erro_ferramenta),
+    )
+    builder.add_conditional_edges(
+        "agent",
+        should_continue,
+        {"tools": "tools", END: END},
+    )
+    builder.add_edge("tools", "agent")  # Cria o ciclo ReAct.
+else:
+    builder.add_edge("agent", END)
 
 agent = builder.compile()
 
@@ -160,6 +199,11 @@ if __name__ == "__main__":
 PERGUNTA_TESTE = (
     "Pesquise na web o que é LangGraph e explique em três pontos qual o papel "
     "dele na construção de agentes de IA."
+    if TAVILY_DISPONIVEL
+    else (
+        "Com base no seu conhecimento geral, explique em três pontos qual é o "
+        "papel do LangGraph na construção de agentes de IA."
+    )
 )
 
 

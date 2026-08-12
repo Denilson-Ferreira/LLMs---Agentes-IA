@@ -89,7 +89,7 @@ Também é possível usar as células `# %%`:
 python .\memoria_editavel.py
 ```
 
-## Células principais para o professor
+## Células principais
 
 - 7–10: blocos, manager, seed e tabela;
 - 12–14: system prompt, tools e loop Groq;

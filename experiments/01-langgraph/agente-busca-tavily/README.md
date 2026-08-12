@@ -45,7 +45,8 @@ decisões observáveis: mensagens, chamadas de ferramenta, resultados e resposta
 - Python 3.10 ou superior.
 - VS Code com as extensões **Python** e **Jupyter**.
 - Uma chave da API da Groq com acesso ao modelo configurado.
-- Uma chave da API da Tavily.
+- Uma chave da API da Tavily para habilitar a busca web. Sem ela, o programa
+  continua executável em modo Groq, mas não afirma ter pesquisado a internet.
 
 ## Instalação no Windows/PowerShell
 
@@ -72,12 +73,11 @@ Copie o exemplo e crie seu arquivo local:
 Copy-Item .env.example .env
 ```
 
-Edite `.env` e substitua apenas os valores:
+Sua chave Groq pode permanecer no `.env` da raiz do repositório. Nesta pasta,
+preencha a chave Tavily para ativar a busca real:
 
 ```dotenv
-GROQ_API_KEY=sua_chave_groq
 TAVILY_API_KEY=sua_chave_tavily
-GROQ_MODEL=llama-3.3-70b-versatile
 ```
 
 O arquivo `.env` é ignorado pelo Git. Nunca publique nem cole suas chaves no
@@ -86,14 +86,14 @@ no `.env` caso sua conta não tenha acesso ao modelo de exemplo.
 
 ## Executar como arquivo Python no VS Code
 
-O arquivo `curso1_langgraph_agente_busca.py` contém blocos `# %%`:
+O arquivo `agente_busca_tavily.py` contém blocos `# %%`:
 
 1. Abra o arquivo no VS Code.
 2. Selecione o interpretador `.venv`.
 3. Use **Run Cell** para executar os blocos na ordem, ou execute tudo no terminal:
 
 ```powershell
-python curso1_langgraph_agente_busca.py
+python agente_busca_tavily.py
 ```
 
 O programa imprime primeiro o Mermaid, tenta exibir uma imagem opcional, executa
@@ -101,7 +101,7 @@ a pergunta de teste, imprime a resposta final e depois detalha todo o histórico
 
 ## Executar o notebook
 
-1. Abra `curso1_langgraph_agente_busca.ipynb`.
+1. Abra `agente_busca_tavily.ipynb`.
 2. Clique em **Select Kernel** e escolha `.venv`.
 3. Execute as células na ordem com **Run All**.
 
@@ -112,14 +112,15 @@ continuará funcional.
 ## Tratamento de erros
 
 O projeto informa claramente quando há chave ausente, falha de autenticação ou
-conexão, erro da Tavily e resposta final vazia. Erros da ferramenta voltam para a
+conexão, erro da Tavily e resposta final vazia. Sem `TAVILY_API_KEY`, ele monta um
+grafo Groq sem ferramenta e avisa que não houve pesquisa web. Erros da ferramenta voltam para a
 LLM com seu tipo e mensagem para que ela não invente resultados. Exceções da LLM
 são relançadas com contexto e preservam a causa original para diagnóstico.
 
 ## Arquivos
 
-- `curso1_langgraph_agente_busca.ipynb`: demonstração principal em 13 células.
-- `curso1_langgraph_agente_busca.py`: o mesmo fluxo em blocos interativos `# %%`.
+- `agente_busca_tavily.ipynb`: demonstração principal em 13 células.
+- `agente_busca_tavily.py`: o mesmo fluxo em blocos interativos `# %%`.
 - `requirements.txt`: dependências do ambiente.
 - `.env.example`: nomes das variáveis, sem chaves reais.
 - `.gitignore`: protege segredos e arquivos temporários.
