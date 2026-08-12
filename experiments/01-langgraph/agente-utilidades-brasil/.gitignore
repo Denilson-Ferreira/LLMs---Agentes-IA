@@ -5,3 +5,4 @@ pycache/
 *.py[cod]
 grafo_langgraph.html
 grafo_langgraph.mmd
+grafo_langgraph.svg

@@ -376,9 +376,11 @@ Dê duplo clique em `ver-grafo.cmd` ou execute:
 ver-grafo.cmd
 ```
 
-O comando consulta o próprio `StateGraph` compilado, gera `grafo_langgraph.mmd` e
-`grafo_langgraph.html`, e abre o diagrama no navegador. O HTML usa Mermaid para desenhar os
-nós e as arestas. A visualização mostra o fluxo observável e não expõe chain-of-thought.
+O comando consulta o próprio `StateGraph` compilado, gera `grafo_langgraph.mmd`,
+`grafo_langgraph.svg` e `grafo_langgraph.html`, e abre o diagrama no navegador. O SVG fica
+incorporado no HTML e funciona localmente, sem CDN, internet ou extensão do Mermaid. Se o
+navegador não abrir automaticamente, abra `grafo_langgraph.html` diretamente. A visualização
+mostra o fluxo observável e não expõe chain-of-thought.
 
 ## Testes reais pelo agente
 
