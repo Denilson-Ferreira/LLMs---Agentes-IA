@@ -40,6 +40,23 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
+def _configure_utf8_console() -> None:
+    """Evita falhas do Rich/CrewAI com emojis no terminal do Windows."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
+_configure_utf8_console()
+
+# O exemplo não precisa enviar telemetria para executar a Crew. Além de preservar
+# privacidade, isto evita esperas e mensagens de erro quando esse endpoint externo
+# estiver bloqueado pela rede.
+os.environ.setdefault("CREWAI_DISABLE_TELEMETRY", "true")
+os.environ.setdefault("OTEL_SDK_DISABLED", "true")
+
+
 def _project_dir() -> Path:
     """Localiza a pasta do experimento no script e no kernel do notebook."""
     if "__file__" in globals():
@@ -55,6 +72,20 @@ PROJECT_DIR = _project_dir()
 REPO_ROOT = next((path for path in (PROJECT_DIR, *PROJECT_DIR.parents) if (path / "experiments").is_dir()), PROJECT_DIR)
 load_dotenv(REPO_ROOT / ".env")
 load_dotenv(PROJECT_DIR / ".env", override=False)
+
+# O CrewAI mantém um banco SQLite interno mesmo quando ``memory=False``. Por
+# padrão ele usa a pasta de dados do usuário, que pode estar bloqueada em VS Code,
+# ambientes corporativos ou sandboxes. Mantemos esse estado descartável dentro do
+# repositório, em uma pasta já ignorada pelo Git.
+CREWAI_STORAGE_DIR = REPO_ROOT / ".crewai-data"
+try:
+    CREWAI_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+except OSError as exc:
+    raise RuntimeError(
+        f"Não foi possível criar o armazenamento local do CrewAI em "
+        f"{CREWAI_STORAGE_DIR}: {exc}"
+    ) from exc
+os.environ.setdefault("CREWAI_STORAGE_DIR", str(CREWAI_STORAGE_DIR))
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile").strip().removeprefix("groq/") or "llama-3.3-70b-versatile"
@@ -76,8 +107,29 @@ from typing import Any, Tuple
 
 import pandas as pd
 from crewai import Agent, Crew, LLM, Process, Task, TaskOutput
+from crewai.hooks.llm_hooks import (
+    LLMCallHookContext,
+    get_before_llm_call_hooks,
+    register_before_llm_call_hook,
+)
 from IPython.display import Markdown, display
 from groq import Groq, GroqError
+
+
+def _groq_message_compatibility_hook(context: LLMCallHookContext) -> None:
+    """Remove metadados do CrewAI que a API de mensagens da Groq não aceita."""
+    model_name = str(getattr(context.llm, "model", ""))
+    if not model_name.startswith("groq/"):
+        return
+    for message in context.messages:
+        message.pop("cache_breakpoint", None)
+
+
+if not any(
+    getattr(hook, "__name__", "") == _groq_message_compatibility_hook.__name__
+    for hook in get_before_llm_call_hooks()
+):
+    register_before_llm_call_hook(_groq_message_compatibility_hook)
 
 
 def create_llm() -> LLM:

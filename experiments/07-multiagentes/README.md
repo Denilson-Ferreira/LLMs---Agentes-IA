@@ -120,6 +120,10 @@ Importar o arquivo não chama APIs. Executar o script ou a célula 16 com uma ch
 válida chama a Crew. A função `single_llm_article(topic)` da célula 31 é uma
 comparação opcional e só chama a Chat Completions API quando invocada explicitamente.
 
+O estado interno do CrewAI é gravado em `.crewai-data/` na raiz do repositório.
+Essa pasta é criada automaticamente e ignorada pelo Git, evitando falhas de acesso
+ao banco SQLite na pasta global do usuário.
+
 ## Outputs
 
 A célula 35 cria, depois de uma execução real:
@@ -165,6 +169,8 @@ LangGraph App B.
 - **Modelo inválido ou sem acesso:** confirme `GROQ_MODEL` e o acesso da conta.
 - **Erro da API:** verifique chave, rede, limites e saldo; a exceção original é mantida.
 - **Erro do CrewAI / Agent / Task:** reinstale os requisitos e execute as células em ordem.
+- **Erro sobre `cache_breakpoint`:** o projeto remove automaticamente esse metadado
+  interno antes de enviar mensagens à Groq.
 - **Output vazio:** revise o modelo, as Tasks e o log `verbose`.
 - **Falha ao salvar:** confirme permissão de escrita na pasta `output/`.
 - **SERPER_API_KEY ausente:** não é erro no fluxo principal; a busca web é ignorada.
