@@ -1,0 +1,19 @@
+{
+  "post": {
+    "id": "post-001",
+    "url": "https://mock.social/posts/001",
+    "platform": "mock",
+    "title": "Nova atualização do aplicativo",
+    "text": "Apresentamos uma atualização com novo design e novos preços."
+  },
+  "comments": [
+    {"id": "1", "text": "Adorei! Ficou perfeito 😍", "author_id": "ana", "likes": 12},
+    {"id": "2", "text": "Que porcaria de atualização. O preço ficou absurdo.", "author_id": "bruno", "likes": 8},
+    {"id": "3", "text": "Normal.", "author_id": "carlos"},
+    {"id": "4", "text": "Nossa, excelente. Só parou de funcionar completamente 🙄", "author_id": "duda", "likes": 20},
+    {"id": "5", "text": "Estou feliz e preocupado ao mesmo tempo.", "author_id": "eva"},
+    {"id": "6", "text": "kkkkkk", "author_id": "fabio"},
+    {"id": "7", "text": "Não gostei nada disso, mas o design ficou muito bonito.", "author_id": "gabi"},
+    {"id": "8", "text": "Adorei! Ficou perfeito 😍", "author_id": "ana"}
+  ]
+}

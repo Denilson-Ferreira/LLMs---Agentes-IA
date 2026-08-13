@@ -21,7 +21,8 @@ LLMs Agentes IA/
 │   ├── 04-protocolo-a2a/              # QA Agent preparado para A2A
 │   ├── 05-grafo-conhecimento/          # Google ADK + Groq/LiteLLM
 │   ├── 06-gerenciamento-contexto/      # Memória editável + tool calling
-│   └── 07-multiagentes/                # CrewAI + Groq
+│   ├── 07-multiagentes/                # CrewAI + Groq
+│   └── 08-analise-sentimento-redes-sociais/ # FastAPI + Groq + análise de comentários
 ├── .env.example
 ├── requirements.txt
 └── README.md
@@ -61,6 +62,7 @@ O `.env` e os ambientes virtuais são ignorados pelo Git.
 | 5 | Interpretação para grafo de conhecimento | Google ADK, LiteLLM e Groq |
 | 6 | Memória editável | Groq e tool calling |
 | 7 | Sistema multiagente | CrewAI, LiteLLM e Groq |
+| 8 | Análise de sentimento em redes sociais | FastAPI, Groq e Pydantic |
 
 ## Execução
 
