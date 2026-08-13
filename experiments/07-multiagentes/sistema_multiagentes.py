@@ -102,7 +102,9 @@ print(f"Modelo: {GROQ_MODEL}")
 print(f"GROQ_API_KEY: {'configurada' if has_groq_key() else 'ausente'}")
 
 # %% — Célula 5: imports e auxiliares
+import asyncio
 import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Tuple
 
 import pandas as pd
@@ -118,11 +120,22 @@ from groq import Groq, GroqError
 
 def _groq_message_compatibility_hook(context: LLMCallHookContext) -> None:
     """Remove metadados do CrewAI que a API de mensagens da Groq não aceita."""
+    global _last_crew_groq_call_at
     model_name = str(getattr(context.llm, "model", ""))
     if not model_name.startswith("groq/"):
         return
+    remaining = GROQ_MIN_REQUEST_INTERVAL - (
+        time.monotonic() - _last_crew_groq_call_at
+    )
+    if remaining > 0:
+        time.sleep(remaining)
+    _last_crew_groq_call_at = time.monotonic()
     for message in context.messages:
         message.pop("cache_breakpoint", None)
+
+
+GROQ_MIN_REQUEST_INTERVAL = float(os.getenv("GROQ_MIN_REQUEST_INTERVAL", "15"))
+_last_crew_groq_call_at = 0.0
 
 
 if not any(
@@ -377,13 +390,24 @@ crew = (
 # contexto do redator; o draft do redator entra no contexto do editor.
 
 # %% — Célula 16: executar a Crew
+def _kickoff_compatible_with_notebook(active_crew: Crew, topic: str) -> Any:
+    """Executa sincronamente no terminal e em uma thread dentro do Jupyter."""
+    inputs = {"topic": topic}
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return active_crew.kickoff(inputs=inputs)
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        return executor.submit(active_crew.kickoff, inputs=inputs).result()
+
+
 def run_crew(topic: str, crew_instance: Crew | None = None) -> tuple[Any, float]:
     if not isinstance(topic, str) or not topic.strip():
         raise ValueError("Tema inválido: forneça um texto não vazio.")
     active_crew = crew_instance or build_article_crew()[0]
     started = time.perf_counter()
     try:
-        crew_result = active_crew.kickoff(inputs={"topic": topic.strip()})
+        crew_result = _kickoff_compatible_with_notebook(active_crew, topic.strip())
     except GroqError as exc:
         raise RuntimeError(
             f"Erro da API Groq. Verifique chave, acesso e modelo {GROQ_MODEL!r}: {exc}"
@@ -586,7 +610,9 @@ def save_outputs(crew_result: Any, output_dir: Path | None = None) -> list[Path]
 
 
 if result is not None:
-    print("Arquivos salvos:", *save_outputs(result), sep="\n- ")
+    saved_files = save_outputs(result)
+    relative_files = [path.relative_to(REPO_ROOT) for path in saved_files]
+    print("Arquivos salvos:", *relative_files, sep="\n- ")
 else:
     print("Nada foi salvo: execute a Crew primeiro.")
 

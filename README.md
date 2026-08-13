@@ -87,6 +87,53 @@ demonstrações reais.
 O agente de busca web também exige `TAVILY_API_KEY`; a pesquisa opcional do
 CrewAI exige `SERPER_API_KEY`.
 
+## Resultados dos notebooks
+
+Todos os notebooks foram executados integralmente em **12 de agosto de 2026**.
+As saídas estão incorporadas nos próprios arquivos `.ipynb` e são renderizadas
+pelo GitHub logo abaixo de cada célula. Células de importação, configuração e
+definição de funções podem terminar sem saída visual, mas também possuem contador
+de execução salvo.
+
+| Curso | Notebook com as saídas | Células de código executadas | Células com saída | Saídas salvas | Erros |
+|---|---|---:|---:|---:|---:|
+| 1 | [Agente de busca Tavily](experiments/01-langgraph/agente-busca-tavily/agente_busca_tavily.ipynb) | 11/11 | 4 | 5 | 0 |
+| 2 | [Memória de longo prazo](experiments/02-memoria-longo-prazo/memoria_longo_prazo.ipynb) | 22/22 | 10 | 10 | 0 |
+| 3 | [RAG local híbrido](experiments/03-rag-local/rag_local.ipynb) | 26/26 | 19 | 22 | 0 |
+| 4 | [QA Agent com Groq](experiments/04-protocolo-a2a/agente_qa_groq.ipynb) | 16/16 | 10 | 18 | 0 |
+| 5 | [Interpretação para grafo de conhecimento](experiments/05-grafo-conhecimento/intencao_usuario.ipynb) | 17/17 | 10 | 15 | 0 |
+| 6 | [Memória editável](experiments/06-gerenciamento-contexto/memoria_editavel.ipynb) | 28/28 | 6 | 8 | 0 |
+| 7 | [Sistema multiagente](experiments/07-multiagentes/sistema_multiagentes.ipynb) | 24/24 | 15 | 53 | 0 |
+| **Total** | **7 notebooks** | **144/144** | **74** | **131** | **0** |
+
+### O que foi produzido
+
+- **Curso 1:** o grafo foi compilado e visualizado, e a resposta da Groq foi
+  gerada pelo caminho de fallback. A busca web não foi acionada porque
+  `TAVILY_API_KEY` não está configurada com uma chave real.
+- **Curso 2:** o agente classificou cobrança duplicada como `notify`, agradecimento
+  como `ignore`, redefinição de senha como `respond` e preservou o feedback humano
+  na memória procedural.
+- **Curso 3:** seis chunks foram indexados; a pergunta sobre o atendimento
+  Enterprise retornou prazo de até duas horas úteis e citou `politicas.txt` e
+  `produtos.txt`. Na avaliação de recuperação, `hit_rate@3` e `recall@3` foram
+  `1.0`, com `MRR` de `0.875`.
+- **Curso 4:** o agente respondeu perguntas sobre a apólice com evidências,
+  identificou a franquia de `R$ 2.500,00` e recusou a instrução adversarial que
+  tentava alterá-la para `R$ 100,00`.
+- **Curso 5:** solicitações foram convertidas em intenções estruturadas, com
+  entidades, relacionamentos, ambiguidades e perguntas de esclarecimento; os três
+  casos de avaliação passaram nas verificações esperadas.
+- **Curso 6:** os blocos de memória foram exibidos e atualizados, a preferência
+  “prática antes de teoria” foi persistida e uma memória arquivada sobre A2A foi
+  recuperada.
+- **Curso 7:** Planner, Writer e Editor executaram a Crew sequencial, produziram
+  plano, rascunho e artigo final, e todas as quatro verificações de resultado
+  terminaram com status `OK`.
+
+As respostas de modelos generativos podem variar em uma nova execução. Os números
+acima descrevem exatamente as saídas que estão salvas nesta versão dos notebooks.
+
 ## Segurança
 
 - Nunca coloque chaves em scripts, notebooks ou commits.

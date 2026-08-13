@@ -56,6 +56,7 @@ if __name__ == "__main__":
 # %%
 import json
 import re
+import time
 from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any, Literal
@@ -167,6 +168,39 @@ CHAT_MEMORY_TOOLS = [
     for tool in MEMORY_TOOLS
 ]
 
+GROQ_MIN_REQUEST_INTERVAL = float(os.getenv("GROQ_MIN_REQUEST_INTERVAL", "15"))
+_last_groq_request_at = 0.0
+
+
+def _groq_completion_with_retry(completions: Any, **kwargs: Any) -> Any:
+    """Executa uma completion respeitando limites temporários da Groq."""
+    global _last_groq_request_at
+    for attempt in range(3):
+        remaining = GROQ_MIN_REQUEST_INTERVAL - (
+            time.monotonic() - _last_groq_request_at
+        )
+        if remaining > 0:
+            time.sleep(remaining)
+        _last_groq_request_at = time.monotonic()
+        try:
+            return completions.create(**kwargs)
+        except Exception as error:
+            detail = str(error)
+            rate_limited = "429" in detail or "rate limit" in detail.lower()
+            if not rate_limited or attempt == 2:
+                raise
+            match = re.search(
+                r"try again in ([0-9.]+)(ms|s)", detail, re.IGNORECASE
+            )
+            if match:
+                delay = float(match.group(1))
+                if match.group(2).lower() == "ms":
+                    delay /= 1000
+                time.sleep(delay + 1)
+            else:
+                time.sleep(15)
+    raise RuntimeError("Retentativas da Groq esgotadas.")
+
 # %%
 MAX_TOOL_STEPS = 5
 @dataclass
@@ -188,7 +222,7 @@ class ContextMemoryAgent:
         messages: list[Any] = [{"role":"system","content":instructions},{"role":"user","content":message}]; trace = TurnTrace(message=message,memory_before=before,context=instructions)
         for step in range(MAX_TOOL_STEPS):
             tool_choice = "none" if step == MAX_TOOL_STEPS - 1 else "auto"
-            try: response = self.client.chat.completions.create(model=self.model,messages=messages,tools=CHAT_MEMORY_TOOLS,tool_choice=tool_choice)
+            try: response = _groq_completion_with_retry(self.client.chat.completions,model=self.model,messages=messages,tools=CHAT_MEMORY_TOOLS,tool_choice=tool_choice)
             except Exception as e: raise RuntimeError(f"Erro da LLM Groq ({type(e).__name__}): {e}") from e
             assistant_message = response.choices[0].message
             calls = list(assistant_message.tool_calls or [])
@@ -279,7 +313,7 @@ def compact_memory_block(manager: EditableMemoryManager,label: str,target_chars:
     if target_chars<=0 or target_chars>block.limit: raise ValueError("target_chars deve ser positivo e não exceder o limite do bloco.")
     active_client=client or (Groq(api_key=GROQ_API_KEY) if GROQ_READY else None)
     if active_client is None: raise RuntimeError("GROQ_API_KEY ausente: compactação por LLM não executada.")
-    response=active_client.chat.completions.create(model=model,messages=[{"role":"system","content":"Resuma a memória preservando fatos, preferências, restrições e decisões. Não invente nada."},{"role":"user","content":f"Limite máximo: {target_chars} caracteres.\n\n{block.value}"}])
+    response=_groq_completion_with_retry(active_client.chat.completions,model=model,messages=[{"role":"system","content":"Resuma a memória preservando fatos, preferências, restrições e decisões. Não invente nada."},{"role":"user","content":f"Limite máximo: {target_chars} caracteres.\n\n{block.value}"}])
     compacted=(response.choices[0].message.content or "").strip()
     if not compacted: raise ValueError("Resposta vazia durante compactação.")
     if len(compacted)>target_chars: raise ValueError(f"Compactação ainda excede o alvo: {len(compacted)}/{target_chars}.")

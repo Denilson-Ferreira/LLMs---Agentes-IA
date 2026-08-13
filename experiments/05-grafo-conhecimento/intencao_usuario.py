@@ -102,6 +102,8 @@ CONFIG_OK = validate_configuration(show_messages=__name__ == "__main__")
 # Imports atuais do Google ADK 2.x e das bibliotecas auxiliares
 import asyncio
 import json
+import re
+import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Callable, Iterable
@@ -156,10 +158,17 @@ Regras:
 """
 
 # %%
-# Criação do Intent Agent com structured output nativo do ADK
+# Criação do Intent Agent com JSON validado pela aplicação
 def create_intent_agent(model: str = MODEL) -> Agent:
     if not model.strip():
         raise ValueError("Modelo inválido: GROQ_MODEL está vazio.")
+    schema = json.dumps(UserIntent.model_json_schema(), ensure_ascii=False)
+    instruction = f"""{INTENT_SYSTEM_PROMPT}
+
+Retorne SOMENTE um objeto JSON válido, sem Markdown e sem comentários. O objeto
+deve obedecer exatamente a este JSON Schema:
+{schema}
+""".strip()
     return Agent(
         name="intent_agent",
         model=LiteLlm(model=f"groq/{model.removeprefix('groq/')}"),
@@ -167,8 +176,7 @@ def create_intent_agent(model: str = MODEL) -> Agent:
             "Analisa solicitações de usuários e produz uma representação estruturada "
             "da intenção para planejamento de Knowledge Graphs."
         ),
-        instruction=INTENT_SYSTEM_PROMPT,
-        output_schema=UserIntent,
+        instruction=instruction,
         output_key="current_intent",
     )
 
@@ -186,6 +194,19 @@ INTENT_RUNNER = Runner(
     session_service=SESSION_SERVICE,
     auto_create_session=True,
 )
+MIN_REQUEST_INTERVAL_SECONDS = float(os.getenv("GROQ_MIN_REQUEST_INTERVAL", "12"))
+_last_groq_request_at = 0.0
+
+
+def _wait_for_groq_rate_window() -> None:
+    """Espaça chamadas consecutivas para respeitar limites gratuitos de TPM."""
+    global _last_groq_request_at
+    remaining = MIN_REQUEST_INTERVAL_SECONDS - (
+        time.monotonic() - _last_groq_request_at
+    )
+    if remaining > 0:
+        time.sleep(remaining)
+    _last_groq_request_at = time.monotonic()
 
 
 def describe_groq_error(error: Exception) -> str:
@@ -218,8 +239,20 @@ def _validate_intent_payload(payload: UserIntent | dict[str, Any] | str) -> User
         return payload
     try:
         if isinstance(payload, dict):
-            return UserIntent.model_validate(payload)
-        return UserIntent.model_validate_json(payload)
+            data = dict(payload)
+        else:
+            text = payload.strip()
+            if text.startswith("```"):
+                lines = text.splitlines()
+                text = "\n".join(lines[1:-1]).strip()
+            start, end = text.find("{"), text.rfind("}")
+            if start < 0 or end < start:
+                raise ValueError("A resposta não contém um objeto JSON.")
+            data = json.loads(text[start : end + 1])
+        for field_name in ("goal", "domain"):
+            if not str(data.get(field_name, "")).strip():
+                data[field_name] = "não informado"
+        return UserIntent.model_validate(data)
     except (ValidationError, json.JSONDecodeError) as error:
         raise ValueError(f"Structured output inválido ou falha Pydantic: {error}") from error
 
@@ -269,26 +302,35 @@ def analyze_user_intent(
     message = types.Content(role="user", parts=[types.Part.from_text(text=clean_request)])
     payload: UserIntent | dict[str, Any] | str | None = None
 
-    try:
-        events: Iterable[Any] = active_runner.run(
-            user_id=USER_ID,
-            session_id=active_session_id,
-            new_message=message,
-            state_delta={
-                "last_user_request": clean_request,
-                "clarifications": clarification_answers or [],
-            },
-        )
-        for event in events:
-            if getattr(event, "error_code", None) or getattr(event, "error_message", None):
-                raise RuntimeError(
-                    f"{getattr(event, 'error_code', 'erro')}: "
-                    f"{getattr(event, 'error_message', 'falha sem detalhe')}"
-                )
-            if event.is_final_response():
-                payload = _event_payload(event)
-    except Exception as error:
-        raise RuntimeError(describe_groq_error(error)) from error
+    for attempt in range(3):
+        _wait_for_groq_rate_window()
+        try:
+            events: Iterable[Any] = active_runner.run(
+                user_id=USER_ID,
+                session_id=active_session_id,
+                new_message=message,
+                state_delta={
+                    "last_user_request": clean_request,
+                    "clarifications": clarification_answers or [],
+                },
+            )
+            for event in events:
+                if getattr(event, "error_code", None) or getattr(event, "error_message", None):
+                    raise RuntimeError(
+                        f"{getattr(event, 'error_code', 'erro')}: "
+                        f"{getattr(event, 'error_message', 'falha sem detalhe')}"
+                    )
+                if event.is_final_response():
+                    payload = _event_payload(event)
+            break
+        except Exception as error:
+            detail = str(error)
+            rate_limited = "429" in detail or "rate limit" in detail.lower()
+            if rate_limited and attempt < 2:
+                match = re.search(r"try again in ([0-9.]+)s", detail, re.IGNORECASE)
+                time.sleep(float(match.group(1)) + 1 if match else 15)
+                continue
+            raise RuntimeError(describe_groq_error(error)) from error
 
     if payload is None:
         raise ValueError("Resposta vazia: o Intent Agent não retornou conteúdo estruturado.")
